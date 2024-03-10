@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Base File"""
 
-from models.engine.file_storage import storage
+from models.engine.file_storage import FileStorage
 
 from datetime import datetime
 import uuid
@@ -37,8 +37,8 @@ class BaseModel:
     def save(self):
         """Define Class"""
         self.updated_at = datetime.now().isoformat()
-        storage.new(self)
-        storage.save
+        FileStorage.new(self)
+        FileStorage.save
 
     def to_dict(self):
         """Define Class"""
