@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 """Base File"""
+
+from models.engine.file_storage import storage
+
 from datetime import datetime
 import uuid
 
-from models.engine.file_storage import storage
 
 
 class BaseModel:
