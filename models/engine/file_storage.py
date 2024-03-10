@@ -1,32 +1,54 @@
 #!/usr/bin/python3
-"""AIRBNB PROJECT"""
+"""
+file_storage that manages
+our storage
+"""
 
 import json
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
+
 
 class FileStorage:
-    """class FILESTORAGE"""
+    """
+    define a class
+    FileStorage that manage objects storage
+    attributes:
+        __file_path (str): file storage path
+        __objects (dict): dictionary of object created
+    """
 
-    __file_path = "filestor.json"
+    __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """class FILESTORAGE"""
-        return self.__objects
+        """ get objects of the class """
+        return FileStorage.__objects
 
     def new(self, obj):
-        """class FILESTORAGE"""
-        item = "{}.{}".format(obj.__class__.__name__, obj.id)
-        self.__objects[item] = obj
+        """ Add new object to objects dictionary """
+        FileStorage.__objects["{}.{}\
+".format(obj.to_dict()['__class__'], obj.id)] = obj
 
     def save(self):
-        """class FILESTORAGE"""
-        with open (self.__file_path, "w", encoding="utf-8") as FILE:
-            json.dump(self.__objects, FILE)
+        """ Save objects to json file """
+        dictionary = {}
+        for key in FileStorage.__objects:
+            dictionary[key] = FileStorage.__objects[key].to_dict()
+        with open(FileStorage.__file_path, "w") as file:
+            file.write(json.dumps(dictionary))
 
     def reload(self):
-        """class FILESTORAGE"""
+        """ load objects from json file """
         try:
-            with open(self.__file_path, "r", encoding="utf-8") as FLE:
-               self.__objects = json.load(FLE)
-        except FileNotFoundError:
+            with open(FileStorage.__file_path, "r") as file:
+                dictionary = json.loads(file.read())
+            for key in dictionary:
+                self.new(eval(dictionary[key]["__class__"])(**dictionary[key]))
+        except IOError:
             pass
