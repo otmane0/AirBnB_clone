@@ -1,21 +1,20 @@
 #!/usr/bin/python3
-"""Base File"""
-
-import models
+"""
+base model of our airBnB
+"""
 
 from datetime import datetime
+import models
 from uuid import uuid4
 
 
-
 class BaseModel:
-    """Define Class"""
+    """
+    Define BaseModel class
+    """
 
     def __init__(self, *args, **kwargs):
-        """Define Class"""
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        """ atrib of console"""
         if kwargs:
             for key in kwargs:
                 if key == "__class__":
@@ -23,11 +22,9 @@ class BaseModel:
                 elif key == "id":
                     self.id = kwargs[key]
                 elif key == "created_at":
-                    self.created_at = datetime.strptime(kwargs[key], "\
-%Y-%m-%dT%H:%M:%S.%f")
+                    self.created_at = datetime.strptime(kwargs[key], "%Y-%m-%dT%H:%M:%S.%f")
                 elif key == "updated_at":
-                    self.updated_at = datetime.strptime(kwargs[key], "\
-%Y-%m-%dT%H:%M:%S.%f")
+                    self.updated_at = datetime.strptime(kwargs[key], "%Y-%m-%dT%H:%M:%S.%f")
                 else:
                     setattr(self, key, kwargs[key])
         else:
@@ -37,16 +34,23 @@ class BaseModel:
             models.storage.new(self)
 
     def __str__(self):
-        """Define Class"""
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+        """
+            object descriptor
+        """
+        return ("[{}] ({}) {}\
+".format(self.__class__.__name__, self.id, self.__dict__))
 
     def save(self):
-        """Define Class"""
+        """
+        save method
+        """
         self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
-        """Define Class"""
+        """
+            new dictionary
+        """
         dictionary = {}
         for key in self.__dict__:
             dictionary[key] = self.__dict__[key]
@@ -54,4 +58,3 @@ class BaseModel:
         dictionary["created_at"] = self.created_at.isoformat()
         dictionary["updated_at"] = self.updated_at.isoformat()
         return dictionary
-
