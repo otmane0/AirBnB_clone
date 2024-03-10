@@ -4,7 +4,7 @@
 import models
 
 from datetime import datetime
-import uuid
+from uuid import uuid4
 
 
 
@@ -17,19 +17,24 @@ class BaseModel:
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         if kwargs:
-            for key, value in kwargs.items():
-                if key == '__class__':
-                    continue
-                if key == 'created_at':
-                    self.created_at = datetime.strptime(kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
-                elif key == 'updated_at':
-                    self.updated_at = datetime.strptime(kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+            for key in kwargs:
+                if key == "__class__":
+                    pass
+                elif key == "id":
+                    self.id = kwargs[key]
+                elif key == "created_at":
+                    self.created_at = datetime.strptime(kwargs[key], "\
+%Y-%m-%dT%H:%M:%S.%f")
+                elif key == "updated_at":
+                    self.updated_at = datetime.strptime(kwargs[key], "\
+%Y-%m-%dT%H:%M:%S.%f")
                 else:
-                    setattr(self, key, value)
-        if len(kwargs) == 0:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now().isoformat()
-            self.updated_at = self.created_at
+                    setattr(self, key, kwargs[key])
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
         """Define Class"""
@@ -37,15 +42,16 @@ class BaseModel:
 
     def save(self):
         """Define Class"""
-        self.updated_at = datetime.now().isoformat()
-        models.storage.new(self)
+        self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
         """Define Class"""
-        new_dictionary = self.__dict__.copy()
-        new_dictionary['__class__'] = self.__class__.__name__
-        new_dictionary['created_at'] = self.created_at.isoformat()
-        new_dictionary['updated_at'] = self.updated_at.isoformat()
+        dictionary = {}
+        for key in self.__dict__:
+            dictionary[key] = self.__dict__[key]
+        dictionary["__class__"] = self.__class__.__name__
+        dictionary["created_at"] = self.created_at.isoformat()
+        dictionary["updated_at"] = self.updated_at.isoformat()
+        return dictionary
 
-        return new_dictionary
