@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""module from dir"""
+"""for"""
 
 from .engine.file_storage import FileStorage
 

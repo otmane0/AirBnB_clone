@@ -1,60 +1,47 @@
 #!/usr/bin/python3
-"""
-base model of our airBnB
-"""
+"""Base File"""
+
+import models
 
 from datetime import datetime
-import models
-from uuid import uuid4
+import uuid
+
 
 
 class BaseModel:
-    """
-    Define BaseModel class
-    """
+    """Define Class"""
 
     def __init__(self, *args, **kwargs):
-        """ atrib of console"""
+        """Define Class"""
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         if kwargs:
-            for key in kwargs:
-                if key == "__class__":
-                    pass
-                elif key == "id":
-                    self.id = kwargs[key]
-                elif key == "created_at":
-                    self.created_at = datetime.strptime(kwargs[key], "%Y-%m-%dT%H:%M:%S.%f")
-                elif key == "updated_at":
-                    self.updated_at = datetime.strptime(kwargs[key], "%Y-%m-%dT%H:%M:%S.%f")
+            for key, value in kwargs.items():
+                if key == '__class__':
+                    continue
+                if key == 'created_at':
+                    self.created_at = datetime.strptime(kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
+                elif key == 'updated_at':
+                    self.updated_at = datetime.strptime(kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
                 else:
-                    setattr(self, key, kwargs[key])
-        else:
-            self.id = str(uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-            models.storage.new(self)
+                    setattr(self, key, value)
 
     def __str__(self):
-        """
-            object descriptor
-        """
-        return ("[{}] ({}) {}\
-".format(self.__class__.__name__, self.id, self.__dict__))
+        """Define Class"""
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """
-        save method
-        """
+        """Define Class"""
         self.updated_at = datetime.now()
+        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
-        """
-            new dictionary
-        """
-        dictionary = {}
-        for key in self.__dict__:
-            dictionary[key] = self.__dict__[key]
-        dictionary["__class__"] = self.__class__.__name__
-        dictionary["created_at"] = self.created_at.isoformat()
-        dictionary["updated_at"] = self.updated_at.isoformat()
-        return dictionary
+        """Define Class"""
+        new_dictionary = self.__dict__.copy()
+        new_dictionary['__class__'] = self.__class__.__name__
+        new_dictionary['created_at'] = self.created_at.isoformat()
+        new_dictionary['updated_at'] = self.updated_at.isoformat()
+
+        return new_dictionary

@@ -1,8 +1,5 @@
 #!/usr/bin/python3
-"""
-file_storage that manages
-our storage
-"""
+"""AIRBNB PROJECT"""
 
 import json
 from models.base_model import BaseModel
@@ -15,39 +12,33 @@ from models.review import Review
 
 
 class FileStorage:
-    """
-    define a class
-    FileStorage that manage objects storage
-    attributes:
-        __file_path (str): file storage path
-        __objects (dict): dictionary of object created
-    """
+    """class FILESTORAGE"""
 
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """ get objects of the class """
-        return FileStorage.__objects
+        """class FILESTORAGE"""
+        return self.__objects
 
     def new(self, obj):
-        """ Add new object to objects dictionary """
-        FileStorage.__objects["{}.{}\
-".format(obj.to_dict()['__class__'], obj.id)] = obj
+        """class FILESTORAGE"""
+        item = "{}.{}".format(obj.__class__.__name__, obj.id)
+        FileStorage.__objects[item] = obj
 
     def save(self):
-        """ Save objects to json file """
-        dictionary = {}
+        """class FILESTORAGE"""
+        dictionay = {}
         for key in FileStorage.__objects:
-            dictionary[key] = FileStorage.__objects[key].to_dict()
+            dictionay[key] = self.__objects[key].to_dict()
         with open(FileStorage.__file_path, "w") as file:
-            file.write(json.dumps(dictionary))
+            file.write(json.dumps(dictionay))
 
     def reload(self):
-        """ load objects from json file """
+        """class FILESTORAGE"""
         try:
-            with open(FileStorage.__file_path, "r") as file:
-                dictionary = json.loads(file.read())
+            with open(self.__file_path, "r", encoding="utf-8") as FILE:
+               dictionary = json.load(FILE)
             for key in dictionary:
                 self.new(eval(dictionary[key]["__class__"])(**dictionary[key]))
         except IOError:
