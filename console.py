@@ -3,13 +3,11 @@
 
 import cmd
 
-
 class HBNBCommand(cmd.Cmd):
     """Console"""
 
     prompt = "(hbnb)"
 
-    """the console"""
     def do_EOF(self, line):
         """for exiting"""
         return True
@@ -25,7 +23,6 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """empty line"""
         pass
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
