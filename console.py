@@ -6,7 +6,7 @@ import cmd
 class HBNBCommand(cmd.Cmd):
     """Console"""
 
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
 
     def do_EOF(self, line):
         """for exiting"""
@@ -15,10 +15,6 @@ class HBNBCommand(cmd.Cmd):
     def do_quit(self, line):
         """for exiting"""
         return True
-
-    def do_help(self, arg: str) -> bool | None:
-        """help func"""
-        return super().do_help(arg)
 
     def emptyline(self):
         """empty line"""
