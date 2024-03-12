@@ -16,6 +16,10 @@ class HBNBCommand(cmd.Cmd):
         """for exiting"""
         return True
 
+    def do_help(self, arg: str) -> bool | None:
+        """help func"""
+        return super().do_help(arg)
+
     def emptyline(self):
         """empty line"""
         pass
