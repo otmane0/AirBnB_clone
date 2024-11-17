@@ -1,2 +1,7 @@
-This is a project AirBNB_clone the console for full project
 
+  
+ To run the tests in non-interactive mode, and discover all the test, you can use the command: 
+  
+ ```bash 
+ python3 -m unittest discover tests 
+ ```
