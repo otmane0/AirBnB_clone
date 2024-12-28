@@ -7,11 +7,23 @@ from datetime import datetime
 
 class BaseModel:
     """Class base of next classes and obj"""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Initialize the instance with unique attributes (Public instance attributes)"""
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if not kwargs:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+        else:
+            for key, value in kwargs.items():
+                if key == "__class__":
+                    continue
+                if key in ("created_at", "updated_at"):
+                    self.__dict__[key] = datetime.fromisoformat(value)
+
+                else:
+                    self.__dict__[key] = value[value]
+
+
+        # self.updated_at = datetime.now()
 
     def __str__(self):
         """Class name with atr"""
