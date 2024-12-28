@@ -8,7 +8,7 @@ from datetime import datetime
 class BaseModel:
     """Class base of next classes and obj"""
     def __init__(self):
-        """Initialize the instance with unique attributes"""
+        """Initialize the instance with unique attributes (Public instance attributes)"""
         self.id = str(uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
