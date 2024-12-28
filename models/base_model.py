@@ -23,8 +23,6 @@ class BaseModel:
                     self.__dict__[key] = value[value]
 
 
-        # self.updated_at = datetime.now()
-
     def __str__(self):
         """Class name with atr"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
