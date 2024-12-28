@@ -7,9 +7,11 @@ from datetime import datetime
 
 class BaseModel:
     """Class base of next classes and obj"""
-    id = str(uuid4())
-    created_at = datetime.now()
-    updated_at = datetime.now()
+    def __init__(self):
+        """Initialize the instance with unique attributes"""
+        self.id = str(uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
     def __str__(self):
         """Class name with atr"""
