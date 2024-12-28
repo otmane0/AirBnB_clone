@@ -12,6 +12,7 @@ class BaseModel:
         if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.now()
+            self.updated_at = datetime.now()
         else:
             for key, value in kwargs.items():
                 if key == "__class__":
@@ -20,7 +21,7 @@ class BaseModel:
                     self.__dict__[key] = datetime.fromisoformat(value)
 
                 else:
-                    self.__dict__[key] = value[value]
+                    self.__dict__[key] = value
 
 
     def __str__(self):
