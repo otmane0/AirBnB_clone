@@ -3,6 +3,6 @@
 
 from models.engine.fil_storage import FileStorage
 
-storage = FileStorage
+storage = FileStorage()
 
 storage.reload()
