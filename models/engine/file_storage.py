@@ -1,39 +1,57 @@
 #!/usr/bin/python3
 """This class for data"""
-import json
-import os
 from models.base_model import BaseModel
+import json
+from uuid import uuid4
+
 
 class FileStorage:
-    """Serializes instances to a JSON file and deserializes JSON file to instances."""
+    """Storage data"""
 
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """Return all objects in __objects."""
+        """Return all"""
         return self.__objects
 
     def new(self, obj):
-        """Add a new object to __objects with key <class name>.id."""
+        """Make new"""
         key = f"{obj.__class__.__name__}.{obj.id}"
         self.__objects[key] = obj
 
     def save(self):
-        """Serialize __objects to the JSON file (path: __file_path)."""
+        """To json"""
         objects_dict = {}
-        for key, obj in self.__objects.items():
-            objects_dict[key] = obj.to_dict()
+        for key, value in self.__objects.items():
+            objects_dict[key] = value.to_dict()
+
         with open(self.__file_path, "w") as file:
             json.dump(objects_dict, file)
 
+
     def reload(self):
-        """Deserialize the JSON file to __objects (if the file exists)."""
-        if not os.path.exists(self.__file_path):
+        """Reload from json, to __objects"""
+        if not self.__file_path:
             return
-        with open(self.__file_path, "r") as file:
-            objects_dict = json.load(file)
-        for key, value in objects_dict.items():
-            class_name = value.get("__class__")
-            if class_name == "BaseModel":
-                self.__objects[key] = BaseModel(**value)
+        else:
+            try:
+                with open(self.__file_path, "r") as file:
+                    objects_dict = json.load(file)
+
+                for key, value in objects_dict.items():
+                    class_name, obj_id = key.split('.')
+
+                    if class_name == "BaseModel":
+                        if "id" not in value:
+                            value["id"] = str(uuid4())
+
+                        obj = BaseModel(**value)
+
+                        self.new(obj)
+            except FileNotFoundError:
+                return
+
+
+
+
