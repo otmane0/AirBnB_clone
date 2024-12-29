@@ -7,16 +7,17 @@ class HBNBCommand(cmd.Cmd):
     """Console class for back-end"""
     prompt = "(hbnb) "
 
-    def do_quit(self, line):
+    def do_quit(self, args):
         """Quit command to exit the program\n"""
         return True
 
-    def do_EOF(self, line):
-        """C-d command to exit the program\n"""
+    def do_EOF(self, args):
+        """EOF command to exit the program\n"""
+        print()
         return True
 
-    def emptyline(self):
-        """an empty line handling"""
+    def do_emptyline(self):
+        """Do nothing on an empty line + ENTER"""
         pass
 
 
