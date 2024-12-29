@@ -1,47 +1,45 @@
 #!/usr/bin/python3
-
-"""Base class of all models"""
+"""Defines the BaseModel class."""
 
 from uuid import uuid4
 from datetime import datetime
-from models.__init__ import storage
+from models import storage
 
 class BaseModel:
-    """Class base of next classes and obj"""
+    """The base class for all models in the application."""
+
     def __init__(self, *args, **kwargs):
-        """Initialize the instance with unique attributes (Public instance attributes)"""
-        if not kwargs:
-            self.id = str(uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-            storage.new(self)
-        else:
+        """Initialize a new BaseModel instance.
+
+        Args:
+            *args: Unused.
+            **kwargs: Key-value pairs of attributes.
+        """
+        if kwargs:
             for key, value in kwargs.items():
-                if key == "__class__":
-                    continue
                 if key in ("created_at", "updated_at"):
                     self.__dict__[key] = datetime.fromisoformat(value)
-
-                else:
+                elif key != "__class__":
                     self.__dict__[key] = value
-
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = self.created_at
+            storage.new(self)
 
     def __str__(self):
-        """Class name with atr"""
+        """Return a string representation of the BaseModel instance."""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """Save current datetime"""
+        """Update `updated_at` and save this instance to storage."""
         self.updated_at = datetime.now()
         storage.save()
 
     def to_dict(self):
-        """Make dic"""
-        my_dic = {}
-        for key, value in self.__dict__.items():
-            my_dic[key] = value
-
-        my_dic["__class__"] = self.__class__.__name__
-        my_dic["created_at"] = self.created_at.isoformat()
-        my_dic["updated_at"] = self.updated_at.isoformat()
-        return my_dic
+        """Return a dictionary representation of the instance."""
+        dictionary = self.__dict__.copy()
+        dictionary["__class__"] = self.__class__.__name__
+        dictionary["created_at"] = self.created_at.isoformat()
+        dictionary["updated_at"] = self.updated_at.isoformat()
+        return dictionary
