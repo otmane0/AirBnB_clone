@@ -14,7 +14,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            storage.new()
+            storage.new(self)
         else:
             for key, value in kwargs.items():
                 if key == "__class__":
