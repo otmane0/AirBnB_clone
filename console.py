@@ -13,10 +13,11 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, args):
         """Exit program"""
-        print("")
+        print()
         return True
 
     def do_emptyline(self, args):
+        """Empty line"""
         pass
 
 
