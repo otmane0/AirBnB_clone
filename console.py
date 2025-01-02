@@ -12,7 +12,7 @@ class HBNBCommand(cmd.Cmd):
     """Console class for back-end"""
     prompt = "(hbnb) "
 
-    classes_list = ["BaseModel", "User", "Email", "Adress"]
+    classes_list = ["BaseModel", "User"]
     class_objects = {
         "BaseModel": BaseModel,
         "User": User
@@ -149,19 +149,21 @@ class HBNBCommand(cmd.Cmd):
         if cl_atr in not_atr:
             return
         else:
+            try:
+                my_class = f"{cl_name}.{cl_id}"
+                anstence = storage.all().get(my_class)
+                if isinstance(getattr(anstence, cl_atr, None), int): # getattr(object, attribute_name, default_value)
+                    setattr(anstence, cl_atr, int(cl_val))
+                if isinstance(getattr(anstence, cl_atr, None), float):
+                    setattr(anstence, cl_atr, float(cl_val))
+                if isinstance(getattr(anstence, cl_atr, None), str):
+                    setattr(anstence, cl_atr, str(cl_val))
+                if isinstance(getattr(anstence, cl_atr, None), bool):
+                    setattr(anstence, cl_atr, bool(cl_val))
 
-            my_class = f"{cl_name}.{cl_id}"
-            anstence = storage.all().get(my_class)
-            if isinstance(getattr(anstence, cl_atr, None), int): # getattr(object, attribute_name, default_value)
-                setattr(anstence, cl_atr, int(cl_val))
-            if isinstance(getattr(anstence, cl_atr, None), float):
-                setattr(anstence, cl_atr, float(cl_val))
-            if isinstance(getattr(anstence, cl_atr, None), str):
-                setattr(anstence, cl_atr, str(cl_val))
-            if isinstance(getattr(anstence, cl_atr, None), bool):
-                setattr(anstence, cl_atr, bool(cl_val))
-
-            storage.save()
+                storage.save()
+            except AttributeError:
+                return
 
 
 
