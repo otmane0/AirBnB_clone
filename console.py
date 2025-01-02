@@ -1,47 +1,45 @@
 #!/usr/bin/python3
-"""Make consol"""
+"""Make console"""
 
 import cmd
 from models.base_model import BaseModel
-import sys
+from models import storage
 import shlex
-
 
 class HBNBCommand(cmd.Cmd):
     """Console class for back-end"""
     prompt = "(hbnb) "
 
-    classes_list = ["BaseModel", "User", "Email", "Adress"]
+    classes_list = ["BaseModel"]
     class_objects = {
         "BaseModel": BaseModel,
     }
 
     def do_quit(self, line):
-        """Quit command to exit the program\n"""
+        """Quit command to exit the program"""
         return True
 
     def do_EOF(self, line):
-        """C-d command to exit the program\n"""
+        """EOF command to exit the program"""
         return True
 
     def emptyline(self):
-        """an empty line handling"""
+        """Handle empty line"""
         pass
 
-    def chick_name(self, line):
-        """chick class_name of all obj"""
+    def check_name(self, line):
+        """Check class name"""
         if not line:
             print("** class name missing **")
             return False
-        atrs = line.split()[0]
-        if not atrs in HBNBCommand.classes_list:
+        class_name = line.split()[0]
+        if class_name not in HBNBCommand.classes_list:
             print("** class doesn't exist **")
             return False
-
         return True
 
-    def chick_id(self, line):
-        """Chick id of all obj"""
+    def check_id(self, line):
+        """Check instance id"""
         parts = shlex.split(line)
         if len(parts) < 2:
             print("** instance id missing **")
@@ -49,14 +47,13 @@ class HBNBCommand(cmd.Cmd):
         class_name = parts[0]
         class_id = parts[1]
         full_instance = f"{class_name}.{class_id}"
-        from models import storage
         if full_instance not in storage.all():
-                print("** no instance found **")
-                return False
+            print("** no instance found **")
+            return False
         return True
 
-    def chick_atr_name_val(self, line):
-        """Chick specefic atribute name and value"""
+    def check_attr_name_val(self, line):
+        """Check attribute name and value"""
         parts = shlex.split(line)
         if len(parts) < 3:
             print("** attribute name missing **")
@@ -67,55 +64,39 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_create(self, line):
-        """Create command to create a new instance"""
-        if not self.chick_name(line):
+        """Create a new instance"""
+        if not self.check_name(line):
             return
-
-        ins_name = shlex.split(line)[0]
-
-        new_instance = HBNBCommand.class_objects.get(ins_name)()
-
-        new_instance.save()  # Save to JSON file (new_instance is Basemodel)
+        class_name = shlex.split(line)[0]
+        new_instance = HBNBCommand.class_objects[class_name]()
+        new_instance.save()
         print(new_instance.id)
 
     def do_show(self, line):
-        """Show the string presentation of class"""
-        if not self.chick_name(line):
+        """Show the string representation of an instance"""
+        if not self.check_name(line):
             return
-        elif not self.chick_id(line):
+        if not self.check_id(line):
             return
-        class_name = shlex.split(line)[0]
-        class_id = shlex.split(line)[1]
-        instance = f"{class_name}.{class_id}"
-        from models import storage
-        instance = storage.all().get(instance)
-
+        class_name, class_id = shlex.split(line)
+        instance = storage.all()[f"{class_name}.{class_id}"]
         print(instance)
 
     def do_destroy(self, line):
-        """Destroy an Obj, then save the update"""
-        if not self.chick_name(line):
+        """Destroy an instance"""
+        if not self.check_name(line):
             return
-        elif not self.chick_id(line):
+        if not self.check_id(line):
             return
-        class_name = shlex.split(line)[0]
-        class_id = shlex.split(line)[1]
+        class_name, class_id = shlex.split(line)
         instance = f"{class_name}.{class_id}"
-        from models import storage
-        # Get the instance from storage
-        new_instance = storage.all().get(instance)
-
-        if new_instance:
-            # Remove the instance from storage
-            del storage.all()[instance]
-            storage.save()  # Save the updated storage (JSON file)
+        del storage.all()[instance]
+        storage.save()
 
     def do_all(self, line):
-        """Print all string representations of instances based on the class name or all instances."""
-        from models import storage
+        """Print all string representations of instances"""
         all_instances = storage.all()
         list_string = []
-
         if line:
             class_name = shlex.split(line)[0]
             if class_name in HBNBCommand.classes_list:
@@ -131,52 +112,20 @@ class HBNBCommand(cmd.Cmd):
         print(list_string)
 
     def do_update(self, line):
-        """Update the instance, and save the changes"""
-        from modules import storage
-        if not self.chick_name(line):
+        """Update an instance"""
+        if not self.check_name(line):
             return
-        elif not self.chick_id(line):
+        if not self.check_id(line):
             return
-        elif not self.chick_atr_name_val(line):
+        if not self.check_attr_name_val(line):
             return
-
-        not_atr = ["id", "created_at", "updated_at"]
-
-        cl_name, cl_id, cl_atr, cl_val = shlex.split(line)
-
-        if cl_atr in not_atr:
-            return
-        else:
-
-            my_class = f"{cl_name}.{cl_id}"
-            anstence = storage.all().get(my_class)
-            if isinstance(getattr(anstence, cl_atr, None), int): # getattr(object, attribute_name, default_value)
-                setattr(anstence, cl_atr, int(cl_val))
-            if isinstance(getattr(anstence, cl_atr, None), float):
-                setattr(anstence, cl_atr, float(cl_val))
-            if isinstance(getattr(anstence, cl_atr, None), str):
-                setattr(anstence, cl_atr, str(cl_val))
-            if isinstance(getattr(anstence, cl_atr, None), bool):
-                setattr(anstence, cl_atr, bool(cl_val))
-
+        parts = shlex.split(line)
+        class_name, class_id, attr_name, attr_value = parts
+        instance = storage.all()[f"{class_name}.{class_id}"]
+        if hasattr(instance, attr_name):
+            attr_type = type(getattr(instance, attr_name))
+            setattr(instance, attr_name, attr_type(attr_value))
             storage.save()
-
-
-
-
-
-
-
-
-# BaseModel
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-
-
-
-    # https://www.youtube.com/@Nightlights2/videos
-
-
-
