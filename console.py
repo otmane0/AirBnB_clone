@@ -3,6 +3,7 @@
 
 import cmd
 from models.base_model import BaseModel
+from models.user import User
 import sys
 import shlex
 
@@ -14,6 +15,7 @@ class HBNBCommand(cmd.Cmd):
     classes_list = ["BaseModel", "User", "Email", "Adress"]
     class_objects = {
         "BaseModel": BaseModel,
+        "User": User
     }
 
     def do_quit(self, line):
