@@ -1,20 +1,28 @@
 #!/usr/bin/python3
 
-"""Base class of all models"""
+"""Defines the BaseModel class for all application models."""
 
 from uuid import uuid4
 from datetime import datetime
 
 class BaseModel:
-    """Class base of next classes and obj"""
+    """BaseModel class to serve as a foundation for other models."""
     def __init__(self, *args, **kwargs):
-        """Initialize the instance with unique attributes (Public instance attributes)"""
+        """Initialize a new BaseModel instance.
+
+            Args:
+                *args: Unused.
+                **kwargs (dict): Key-value pairs for instance initialization.
+                    If kwargs is provided, the instance is reconstructed
+                    from a dictionary (e.g., from JSON data).
+                    Otherwise, a new instance is created with default attributes.
+        """
         if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             from models import storage
-            storage.new(self)
+            storage.new(self) #Add the instance  with atrr to storage (class.id) => self.__objects
         else:
             for key, value in kwargs.items():
                 if key == "__class__":
@@ -34,10 +42,14 @@ class BaseModel:
         """Save current datetime"""
         self.updated_at = datetime.now()
         from models import storage
-        storage.save()
+        storage.save() # Save the instance with attributes to Sotrage
 
     def to_dict(self):
-        """Make dic"""
+        """Convert the instance into a dictionary format for JSON serialization.
+
+        Returns:
+            dict: A dictionary representation of the instance.
+        """
         my_dic = {}
         for key, value in self.__dict__.items():
             my_dic[key] = value
