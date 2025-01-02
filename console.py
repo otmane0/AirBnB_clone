@@ -4,6 +4,11 @@
 import cmd
 from models.base_model import BaseModel
 from models.user import User
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
 import sys
 import shlex
 
@@ -12,10 +17,15 @@ class HBNBCommand(cmd.Cmd):
     """Console class for back-end"""
     prompt = "(hbnb) "
 
-    classes_list = ["BaseModel", "User"]
+    classes_list = ["BaseModel", "User", "Amenity", "City", "Place", "Review", "State"]
     class_objects = {
         "BaseModel": BaseModel,
-        "User": User
+        "User": User,
+        "Amenity": Amenity,
+        "City": City,
+        "Place": Place,
+        "Review": Review,
+        "State": State
     }
 
     def do_quit(self, line):
