@@ -1,131 +1,69 @@
-#!/usr/bin/python3
-"""Make console"""
+class Test:
+    """Class to demonstrate a console-based project."""
 
-import cmd
-from models.base_model import BaseModel
-from models import storage
-import shlex
+    def __init__(self):
+        """Initialize with a list of data."""
+        self.data = []
 
-class HBNBCommand(cmd.Cmd):
-    """Console class for back-end"""
-    prompt = "(hbnb) "
+    def create(self, item):
+        """Add a new item to the list."""
+        self.data.append(item)
 
-    classes_list = ["BaseModel"]
-    class_objects = {
-        "BaseModel": BaseModel,
-    }
+    def show(self, index):
+        """
+        Display a specific item in the list by its index.
 
-    def do_quit(self, line):
-        """Quit command to exit the program"""
-        return True
+        Parameters:
+        - index: The position of the item in the list.
 
-    def do_EOF(self, line):
-        """EOF command to exit the program"""
-        return True
+        Returns:
+        - The item at the specified index.
+        """
+        try:
+            return self.data[index]
+        except IndexError:
+            return f"Index {index} is out of range."
 
-    def emptyline(self):
-        """Handle empty line"""
-        pass
+    def destroy(self, index):
+        """
+        Remove an item from the list by its index.
 
-    def check_name(self, line):
-        """Check class name"""
-        if not line:
-            print("** class name missing **")
-            return False
-        class_name = line.split()[0]
-        if class_name not in HBNBCommand.classes_list:
-            print("** class doesn't exist **")
-            return False
-        return True
+        Parameters:
+        - index: The position of the item to remove.
 
-    def check_id(self, line):
-        """Check instance id"""
-        parts = shlex.split(line)
-        if len(parts) < 2:
-            print("** instance id missing **")
-            return False
-        class_name = parts[0]
-        class_id = parts[1]
-        full_instance = f"{class_name}.{class_id}"
-        if full_instance not in storage.all():
-            print("** no instance found **")
-            return False
-        return True
+        Returns:
+        - A success message or an error if the index is invalid.
+        """
+        try:
+            self.data.pop(index)
+            return f"Item at index {index} removed."
+        except IndexError:
+            return f"Index {index} is out of range."
 
-    def check_attr_name_val(self, line):
-        """Check attribute name and value"""
-        parts = shlex.split(line)
-        if len(parts) < 3:
-            print("** attribute name missing **")
-            return False
-        if len(parts) < 4:
-            print("** value missing **")
-            return False
-        return True
+    def all(self):
+        """
+        Return a list of all items.
 
-    def do_create(self, line):
-        """Create a new instance"""
-        if not self.check_name(line):
-            return
-        class_name = shlex.split(line)[0]
-        new_instance = HBNBCommand.class_objects[class_name]()
-        new_instance.save()
-        print(new_instance.id)
+        Returns:
+        - A formatted string of all items.
+        """
+        if not self.data:
+            return "No items in the list."
+        return '\n'.join([f"{i}: {item}" for i, item in enumerate(self.data)])
 
-    def do_show(self, line):
-        """Show the string representation of an instance"""
-        if not self.check_name(line):
-            return
-        if not self.check_id(line):
-            return
-        class_name, class_id = shlex.split(line)
-        instance = storage.all()[f"{class_name}.{class_id}"]
-        print(instance)
+    def update(self, index, new_item):
+        """
+        Update an item at a specific index.
 
-    def do_destroy(self, line):
-        """Destroy an instance"""
-        if not self.check_name(line):
-            return
-        if not self.check_id(line):
-            return
-        class_name, class_id = shlex.split(line)
-        instance = f"{class_name}.{class_id}"
-        del storage.all()[instance]
-        storage.save()
+        Parameters:
+        - index: The position of the item to update.
+        - new_item: The new value to assign.
 
-    def do_all(self, line):
-        """Print all string representations of instances"""
-        all_instances = storage.all()
-        list_string = []
-        if line:
-            class_name = shlex.split(line)[0]
-            if class_name in HBNBCommand.classes_list:
-                for key, obj in all_instances.items():
-                    if key.startswith(f"{class_name}."):
-                        list_string.append(str(obj))
-            else:
-                print("** class doesn't exist **")
-                return
-        else:
-            for obj in all_instances.values():
-                list_string.append(str(obj))
-        print(list_string)
-
-    def do_update(self, line):
-        """Update an instance"""
-        if not self.check_name(line):
-            return
-        if not self.check_id(line):
-            return
-        if not self.check_attr_name_val(line):
-            return
-        parts = shlex.split(line)
-        class_name, class_id, attr_name, attr_value = parts
-        instance = storage.all()[f"{class_name}.{class_id}"]
-        if hasattr(instance, attr_name):
-            attr_type = type(getattr(instance, attr_name))
-            setattr(instance, attr_name, attr_type(attr_value))
-            storage.save()
-
-if __name__ == '__main__':
-    HBNBCommand().cmdloop()
+        Returns:
+        - A success message or an error if the index is invalid.
+        """
+        try:
+            self.data[index] = new_item
+            return f"Item at index {index} updated to '{new_item}'."
+        except IndexError:
+            return f"Index {index} is out of range."
