@@ -132,7 +132,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, line):
         """Update the instance, and save the changes"""
-        from modules import storage
+        from models import storage
         if not self.chick_name(line):
             return
         elif not self.chick_id(line):
