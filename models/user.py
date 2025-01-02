@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Class User"""
-from base_model import BaseModel
+from models.base_model import BaseModel
 
 class User(BaseModel):
     """User in the console"""
